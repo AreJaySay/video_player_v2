@@ -1,12 +1,12 @@
-import 'package:fitnesstracker/splashscreen.dart';
+import 'package:fitness_video_player/splashscreen.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(FitnessTrackerApp());
+  runApp(fitness_video_playerApp());
 }
 
-class FitnessTrackerApp extends StatelessWidget {
+class fitness_video_playerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

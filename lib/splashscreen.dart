@@ -1,10 +1,6 @@
-import 'package:fitnesstracker/landing.dart';
-import 'package:fitnesstracker/main.dart';
+import 'package:fitness_video_player/video_players/video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:intl/intl.dart';
 import 'dart:async';
 
 class SplashScreen extends StatefulWidget {
@@ -19,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LandingPage()),
+        MaterialPageRoute(builder: (context) => VideoPlayerPage()),
       );
     });
   }
@@ -33,15 +29,14 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.fitness_center,
+              Icons.play_arrow_rounded,
               color: Colors.tealAccent,
-              size: 100.0,
+              size: 120.0,
             ),
-            SizedBox(height: 20.0),
-            SpinKitFadingCircle(
-              color: Colors.tealAccent,
-              size: 50.0,
+            SizedBox(
+              height: 130,
             ),
+            CircularProgressIndicator(color: Colors.teal,)
           ],
         ),
       ),
