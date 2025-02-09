@@ -1,4 +1,4 @@
-# fitnesstracker
+# fitness_video_player
 
 A new Flutter project.
 
