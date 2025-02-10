@@ -1,107 +1,98 @@
 import 'dart:io';
-
 import 'package:fitness_video_player/video_players/view_video.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerPage extends StatefulWidget {
+  final String selectedMood;
+  VideoPlayerPage({required this.selectedMood});
+
   @override
   State<VideoPlayerPage> createState() => _VideoPlayerPageState();
 }
 
 class _VideoPlayerPageState extends State<VideoPlayerPage> {
-  List<String> _vids = ["boxing","heavy_lefting","jogging","lefting","relaxition","training"];
+  Map<String, List<Map<String, String>>> moodVideos = {
+    "Relaxed": [{"title": "Creamy Garlic Butter Shrimp", "description": "Enjoy a peaceful moment.", "video": "relaxed"}],
+    "Sad": [{"title": "Chicken Noodle Soup ", "description": "Let it all out.", "video": "sad"}],
+    "Tired": [{"title": "Ramen", "description": "Boost your energy levels.", "video": "tired"}],
+    "Romantic": [{"title": "Chocolate Fondue", "description": "Feel the romance.", "video": "romantic"}],
+    "Adventure": [{"title": "Buffalo Wings", "description": "Get ready for excitement.", "video": "adventure"}]
+  };
+
+  List<Map<String, String>> get videos => moodVideos[widget.selectedMood] ?? [];
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24) / 4;
     final double itemWidth = size.width / 2;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Video Playlist",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500),),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        shadowColor: Colors.grey.shade100,
-        centerTitle: true,
+        title: Text("${widget.selectedMood} Videos"),
+        backgroundColor: Colors.blue,
       ),
       body: SafeArea(
-        child: GridView.count(
-          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: (itemWidth / itemHeight),
-          controller: new ScrollController(keepScrollOffset: false),
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          children: [
-            for(int x = 0; x < _vids.length; x++)...{
-              CurrentVideo(video: _vids[x],)
-            }
-          ]
+        child: Center(
+          child: GridView.count(
+            shrinkWrap: true,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            crossAxisCount: videos.length == 1 ? 1 : 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: (itemWidth / itemHeight),
+            children: videos.map((videoData) => CurrentVideo(videoData: videoData)).toList(),
+          ),
         ),
       ),
     );
   }
 }
 
-class CurrentVideo extends StatefulWidget {
-  final String video;
-  CurrentVideo({required this.video});
-  @override
-  State<CurrentVideo> createState() => _CurrentVideoState();
-}
-
-class _CurrentVideoState extends State<CurrentVideo> {
-  VideoPlayerController? _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = VideoPlayerController.asset("assets/videos/${widget.video}.mp4")
-      ..initialize().then((_) {
-        setState(() {});
-      });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _controller!.dispose();
-    super.dispose();
-  }
+class CurrentVideo extends StatelessWidget {
+  final Map<String, String> videoData;
+  CurrentVideo({required this.videoData});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: _controller!.value.isInitialized
-          ? Stack(
-            children: [
-              GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ViewVideo(controller: _controller!)),
-                  );
-                },
-                child: Center(
-                  child: AspectRatio(
-                                aspectRatio: _controller!.value.aspectRatio,
-                                child: VideoPlayer(_controller!),
-                              ),
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewVideo(videoPath: "assets/videos/${videoData['video']}.mp4"),
               ),
-              Center(child: Icon(Icons.play_circle_outline_rounded,color: Colors.teal,size: 30,))
-            ],
-          )
-          : Center(child: CircularProgressIndicator(color: Colors.teal,))
+            );
+          },
+          child: Container(
+            height: 150,
+            decoration: BoxDecoration(
+              color: Colors.black87,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Icon(Icons.play_circle_outline_rounded, color: Colors.teal, size: 50),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Text(
+          videoData['title']!,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          videoData['description']!,
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }
